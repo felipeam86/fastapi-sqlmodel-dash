@@ -1,1 +1,2 @@
 sqlmodel==0.0.4
+faker==9.8.2
