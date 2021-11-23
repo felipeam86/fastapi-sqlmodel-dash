@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  db:
+      container_name: pg_container
+      image: postgres:13.4
+      environment:
+        POSTGRES_USER: root
+        POSTGRES_PASSWORD: root
+        POSTGRES_DB: sales
+      ports:
+        - "5432:5432"
+      volumes:
+        - pg_data:/var/lib/postgresql/data/
+volumes:
+  pg_data:
