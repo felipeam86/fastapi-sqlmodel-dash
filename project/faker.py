@@ -95,6 +95,7 @@ def fake_data(present_date: datetime = datetime(2021, 11, 1)):
                     min_sales = int((present_date - e.created_at).days / 10)
                     # Buys once every 6 days
                     max_sales = int((present_date - e.created_at).days / 6)
+                    max_sales_amount = fake.pyint(min_value=30, max_value=100)
                     for sales_creation_date in fake_ordered_dates(
                         fake.pyint(min_sales, max_sales),
                         c.created_at,
@@ -104,7 +105,8 @@ def fake_data(present_date: datetime = datetime(2021, 11, 1)):
                             customer=c,
                             seller=e,
                             date=sales_creation_date,
-                            amount=fake.pyint(min_value=10, max_value=100) * 100,
+                            amount=fake.pyint(min_value=10, max_value=max_sales_amount)
+                            * 100,
                         )
 
             session.add(t)
