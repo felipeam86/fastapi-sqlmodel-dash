@@ -1,8 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, List, Union
 
 from faker import Faker
+from sqlmodel import Session
 
+from .db import create_db_and_tables, engine
+from .models import Customer, Employee, Sales, Territory
 
 TERRITORIES = [
     {"continent": "Africa", "country": "Rwanda"},
@@ -21,6 +24,7 @@ TERRITORIES = [
 
 
 fake = Faker()
+Faker.seed(0)
 
 
 def fake_ordered_dates(n, start, end):
@@ -49,3 +53,68 @@ def fake_territories(
     ]
 
     return territories_with_dates
+
+
+def fake_data(present_date: datetime = datetime(2021, 11, 1)):
+
+    create_db_and_tables()
+
+    with Session(engine) as session:
+        territories = fake_territories(
+            territories=TERRITORIES,
+            start=present_date - timedelta(days=10 * 365),  # First territory aqcisition
+            end=present_date - timedelta(days=5 * 365),  # Last territory aqcisition
+        )
+        for territory in territories:
+            t = Territory(**territory)
+            for employee_creation_date in fake_ordered_dates(
+                fake.pyint(2, 5),
+                t.created_at,
+                present_date - timedelta(days=4 * 365),
+            ):
+                e = Employee(
+                    name=fake.name(),
+                    created_at=employee_creation_date,
+                    territory=t,
+                )
+                # Aquires customer once every 60 days
+                min_costumers = int((present_date - e.created_at).days / 60)
+                # Aquires customer once every 30 days
+                max_costumers = int((present_date - e.created_at).days / 30)
+                for customer_creation_date in fake_ordered_dates(
+                    fake.pyint(min_costumers, max_costumers),
+                    e.created_at,
+                    present_date,
+                ):
+                    c = Customer(
+                        name=fake.name(),
+                        created_at=customer_creation_date,
+                        territory=t,
+                    )
+                    # Buys once every 10 days
+                    min_sales = int((present_date - e.created_at).days / 10)
+                    # Buys once every 6 days
+                    max_sales = int((present_date - e.created_at).days / 6)
+                    for sales_creation_date in fake_ordered_dates(
+                        fake.pyint(min_sales, max_sales),
+                        c.created_at,
+                        present_date,
+                    ):
+                        s = Sales(
+                            customer=c,
+                            seller=e,
+                            date=sales_creation_date,
+                            amount=fake.pyint(min_value=10, max_value=100) * 100,
+                        )
+
+            session.add(t)
+        session.commit()
+
+
+def main(present_date: datetime = datetime(2021, 11, 1)):
+    create_db_and_tables()
+    fake_data(present_date)
+
+
+if __name__ == "__main__":
+    main()
