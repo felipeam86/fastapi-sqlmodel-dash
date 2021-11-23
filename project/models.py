@@ -22,10 +22,12 @@ class Human(SQLModel):
 
 class Employee(Human, table=True):
     territory: Territory = Relationship(back_populates="employees")
+    sales: "Sales" = Relationship(back_populates="seller")
 
 
 class Customer(Human, table=True):
     territory: Territory = Relationship(back_populates="customers")
+    purchases: "Sales" = Relationship(back_populates="customer")
 
 
 class Sales(SQLModel, table=True):
@@ -34,3 +36,5 @@ class Sales(SQLModel, table=True):
     employee_id: int = Field(foreign_key="employee.id")
     date: datetime
     amount: float
+    customer: Customer = Relationship(back_populates="purchases")
+    seller: Employee = Relationship(back_populates="sales")
