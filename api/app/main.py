@@ -15,7 +15,7 @@ from .models import (
     Territory,
 )
 
-app = FastAPI()
+app = FastAPI(title="Sales API")
 
 
 @app.on_event("startup")

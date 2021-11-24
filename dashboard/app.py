@@ -2,7 +2,10 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, dcc, html
 
-app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(
+    title="Sales Dashboard",
+    external_stylesheets=[dbc.themes.BOOTSTRAP],
+)
 
 
 SIDEBAR_STYLE = {
