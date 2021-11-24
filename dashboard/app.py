@@ -1,11 +1,13 @@
 import dash
 import dash_bootstrap_components as dbc
+import data
 from dash import Input, Output, dcc, html
 
 app = dash.Dash(
     title="Sales Dashboard",
     external_stylesheets=[dbc.themes.BOOTSTRAP],
 )
+app.config.suppress_callback_exceptions = True
 
 
 SIDEBAR_STYLE = {
@@ -45,6 +47,27 @@ content = html.Div(id="page-content", style=CONTENT_STYLE)
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
+region = dbc.Container(
+    [
+        dcc.Store(id="store"),
+        html.H1("Region overview"),
+        html.Hr(),
+        dbc.Tabs(
+            [
+                dbc.Tab(label="Africa", tab_id="Africa"),
+                dbc.Tab(label="Europe", tab_id="Europe"),
+                dbc.Tab(label="Asia", tab_id="Asia"),
+            ],
+            id="tabs",
+            active_tab="Africa",
+        ),
+        dcc.Graph(
+            id="region_graph",
+        ),
+        html.Div(id="top_employees"),
+    ]
+)
+
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
@@ -53,7 +76,7 @@ def render_page_content(pathname):
     elif pathname == "/global":
         return html.P("Global overview of operations")
     elif pathname == "/region":
-        return html.P("Regional overview of operations")
+        return region
     # If the user tries to reach a different page, return a 404 message
     return html.Div(
         dbc.Container(
@@ -67,6 +90,25 @@ def render_page_content(pathname):
         ),
         className="p-3 bg-light rounded-3",
     )
+
+
+@app.callback(
+    [
+        Output("region_graph", "figure"),
+        Output("top_employees", "children"),
+    ],
+    [Input("tabs", "active_tab")],
+)
+def render_continent_tab_content(continent_tab):
+    if continent_tab is not None:
+        df_employees = data.get_top10_employees(continent_tab)
+        table = dbc.Table.from_dataframe(
+            df_employees,
+            striped=True,
+            bordered=True,
+            hover=True,
+        )
+        return {}, table
 
 
 if __name__ == "__main__":

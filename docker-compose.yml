@@ -33,6 +33,7 @@ services:
         - 8050:8050
       environment:
         - DASH_DEBUG_MODE=True
+        - API_URL=http://api:8000/
       depends_on:
         - api
 
