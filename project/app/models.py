@@ -1,7 +1,14 @@
 from datetime import datetime
+from enum import Enum
 from typing import List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
+
+
+class Continent(str, Enum):
+    Africa = "Africa"
+    Europe = "Europe"
+    Asia = "Asia"
 
 
 class Territory(SQLModel, table=True):

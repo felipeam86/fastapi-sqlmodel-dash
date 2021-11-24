@@ -5,7 +5,15 @@ from fastapi import FastAPI
 from sqlmodel import Session, select
 
 from . import db, queries
-from .models import Customer, CustomerOut, Employee, Sales, SalesCreate, Territory
+from .models import (
+    Continent,
+    Customer,
+    CustomerOut,
+    Employee,
+    Sales,
+    SalesCreate,
+    Territory,
+)
 
 app = FastAPI()
 
@@ -64,7 +72,7 @@ def get_customers(territory_id: int) -> List[Customer]:
 
 
 @app.get("/topn_emplyees/{continent}/{n}", tags=["Employee"])
-def get_customers(continent: str, n: int):
+def get_customers(continent: Continent, n: int):
 
     query = queries.get_top_n_employees(continent, n)
     with Session(db.engine) as session:
@@ -73,7 +81,7 @@ def get_customers(continent: str, n: int):
 
 
 @app.get("/top100_customers/{continent}", tags=["Customer"])
-def get_customers(continent: str):
+def get_customers(continent: Continent):
 
     query = queries.get_top_100_customers(continent)
     with Session(db.engine) as session:
