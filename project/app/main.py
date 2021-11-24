@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from sqlmodel import Session, select
 
 from . import db, queries
-from .models import Customer, Employee, Territory
+from .models import Customer, CustomerOut, Employee, Territory
 
 app = FastAPI()
 
@@ -42,10 +42,14 @@ def get_employees() -> List[Employee]:
         return employees
 
 
-@app.get("/customer/{customer_id}", response_model=Customer, tags=["Customer"])
+@app.get("/customer/{customer_id}", response_model=CustomerOut, tags=["Customer"])
 def get_employee(customer_id: int) -> Customer:
     with Session(db.engine) as session:
         customer = session.get(Customer, customer_id)
+        customer = CustomerOut(
+            last_purchases=customer.purchases[-10:],
+            **customer.dict(),
+        )
         return customer
 
 

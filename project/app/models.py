@@ -30,6 +30,10 @@ class Customer(Human, table=True):
     purchases: List["Sales"] = Relationship(back_populates="customer")
 
 
+class CustomerOut(Human):
+    last_purchases: List["Sales"]
+
+
 class Sales(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     customer_id: int = Field(foreign_key="customer.id")
@@ -38,3 +42,9 @@ class Sales(SQLModel, table=True):
     amount: float
     customer: Customer = Relationship(back_populates="purchases")
     seller: Employee = Relationship(back_populates="sales")
+
+
+Territory.update_forward_refs()
+Employee.update_forward_refs()
+Customer.update_forward_refs()
+CustomerOut.update_forward_refs()
