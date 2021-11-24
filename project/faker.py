@@ -67,6 +67,8 @@ def fake_data(present_date: datetime = datetime(2021, 11, 1)):
         )
         for territory in territories:
             t = Territory(**territory)
+            min_sales_territory = fake.pyint(min_value=5, max_value=30)
+            max_sales_territory = fake.pyint(min_value=100, max_value=150)
             for employee_creation_date in fake_ordered_dates(
                 fake.pyint(2, 5),
                 t.created_at,
@@ -81,6 +83,12 @@ def fake_data(present_date: datetime = datetime(2021, 11, 1)):
                 min_costumers = int((present_date - e.created_at).days / 60)
                 # Aquires customer once every 30 days
                 max_costumers = int((present_date - e.created_at).days / 30)
+                min_sales_costumers = fake.pyint(
+                    min_value=min_sales_territory, max_value=min_sales_territory * 2
+                )
+                max_sales_costumers = fake.pyint(
+                    min_value=max_sales_territory, max_value=max_sales_territory * 2
+                )
                 for customer_creation_date in fake_ordered_dates(
                     fake.pyint(min_costumers, max_costumers),
                     e.created_at,
@@ -95,7 +103,12 @@ def fake_data(present_date: datetime = datetime(2021, 11, 1)):
                     min_sales = int((present_date - e.created_at).days / 10)
                     # Buys once every 6 days
                     max_sales = int((present_date - e.created_at).days / 6)
-                    max_sales_amount = fake.pyint(min_value=30, max_value=100)
+                    min_sales_amount = fake.pyint(
+                        min_value=min_sales_costumers, max_value=min_sales_costumers * 2
+                    )
+                    max_sales_amount = fake.pyint(
+                        min_value=max_sales_costumers, max_value=max_sales_costumers * 2
+                    )
                     for sales_creation_date in fake_ordered_dates(
                         fake.pyint(min_sales, max_sales),
                         c.created_at,
@@ -105,7 +118,9 @@ def fake_data(present_date: datetime = datetime(2021, 11, 1)):
                             customer=c,
                             seller=e,
                             date=sales_creation_date,
-                            amount=fake.pyint(min_value=10, max_value=max_sales_amount)
+                            amount=fake.pyint(
+                                min_value=min_sales_amount, max_value=max_sales_amount
+                            )
                             * 100,
                         )
 
