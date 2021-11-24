@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from sqlmodel import Session, select
 
 from . import db, queries
@@ -63,10 +63,17 @@ def get_employee(customer_id: int) -> Customer:
 
 
 @app.get("/customers/{territory_id}", response_model=List[Customer], tags=["Customer"])
-def get_customers(territory_id: int) -> List[Customer]:
+def get_customers(
+    territory_id: int,
+    offset: int = 0,
+    limit: int = Query(default=50, lte=50),
+) -> List[Customer]:
     with Session(db.engine) as session:
         customers = session.exec(
-            select(Customer).where(Customer.territory_id == territory_id)
+            select(Customer)
+            .where(Customer.territory_id == territory_id)
+            .offset(offset)
+            .limit(limit)
         ).all()
         return customers
 
