@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from random import randint, random, seed
 from typing import Dict, List, Union
 
 from faker import Faker
@@ -25,6 +26,11 @@ TERRITORIES = [
 
 fake = Faker()
 Faker.seed(0)
+seed(0)
+
+
+def make_random_multiplier():
+    return 1 - (randint(0, 1) * 2 - 1) * random() * 0.5
 
 
 def fake_ordered_dates(n, start, end):
@@ -58,6 +64,15 @@ def fake_territories(
 def fake_data(present_date: datetime = datetime(2021, 11, 1)):
 
     create_db_and_tables()
+
+    sales_year_multipliers = {
+        year: make_random_multiplier()
+        for year in range(present_date.year, present_date.year - 11, -1)
+    }
+    sales_continent_multipliers = {
+        continent: make_random_multiplier()
+        for continent in {"Africa", "Europe", "Asia"}
+    }
 
     with Session(engine) as session:
         territories = fake_territories(
@@ -121,7 +136,9 @@ def fake_data(present_date: datetime = datetime(2021, 11, 1)):
                             amount=fake.pyint(
                                 min_value=min_sales_amount, max_value=max_sales_amount
                             )
-                            * 100,
+                            * 100
+                            * sales_year_multipliers[sales_creation_date.year]
+                            * sales_continent_multipliers[t.continent],
                         )
 
             session.add(t)
