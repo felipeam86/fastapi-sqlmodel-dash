@@ -22,12 +22,12 @@ class Human(SQLModel):
 
 class Employee(Human, table=True):
     territory: Territory = Relationship(back_populates="employees")
-    sales: "Sales" = Relationship(back_populates="seller")
+    sales: List["Sales"] = Relationship(back_populates="seller")
 
 
 class Customer(Human, table=True):
     territory: Territory = Relationship(back_populates="customers")
-    purchases: "Sales" = Relationship(back_populates="customer")
+    purchases: List["Sales"] = Relationship(back_populates="customer")
 
 
 class Sales(SQLModel, table=True):
