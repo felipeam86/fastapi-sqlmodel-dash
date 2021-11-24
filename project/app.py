@@ -65,3 +65,12 @@ def get_customers(continent: str, n: int):
     with Session(db.engine) as session:
         topn_empoyees = session.exec(query).all()
         return topn_empoyees
+
+
+@app.get("/top100_customers/{continent}", tags=["Customer"])
+def get_customers(continent: str):
+
+    query = queries.get_top_100_customers(continent)
+    with Session(db.engine) as session:
+        top100_customers = session.exec(query).all()
+        return top100_customers
