@@ -23,10 +23,10 @@ def on_startup():
     db.create_db_and_tables()
 
 
-@app.get("/territory/{hero_id}", response_model=Territory, tags=["Territory"])
-def get_territory(hero_id: int) -> Territory:
+@app.get("/territory/{territory_id}", response_model=Territory, tags=["Territory"])
+def get_territory(territory_id: int) -> Territory:
     with Session(db.engine) as session:
-        territory = session.get(Territory, hero_id)
+        territory = session.get(Territory, territory_id)
         return territory
 
 
