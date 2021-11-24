@@ -1,10 +1,11 @@
+from datetime import datetime
 from typing import List
 
 from fastapi import FastAPI
 from sqlmodel import Session, select
 
 from . import db, queries
-from .models import Customer, CustomerOut, Employee, Territory
+from .models import Customer, CustomerOut, Employee, Sales, SalesCreate, Territory
 
 app = FastAPI()
 
@@ -78,3 +79,18 @@ def get_customers(continent: str):
     with Session(db.engine) as session:
         top100_customers = session.exec(query).all()
         return top100_customers
+
+
+@app.post("/sale", response_model=Sales, tags=["Sales"])
+def add_sale(sale: SalesCreate):
+    with Session(db.engine) as session:
+        sale = Sales(
+            customer_id=sale.customer_id,
+            employee_id=sale.employee_id,
+            amount=sale.amount,
+            date=datetime.now(),
+        )
+        session.add(sale)
+        session.commit()
+        session.refresh(sale)
+        return sale

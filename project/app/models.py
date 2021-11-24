@@ -34,14 +34,21 @@ class CustomerOut(Human):
     last_purchases: List["Sales"]
 
 
-class Sales(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+class SalesBase(SQLModel):
     customer_id: int = Field(foreign_key="customer.id")
     employee_id: int = Field(foreign_key="employee.id")
-    date: datetime
     amount: float
+
+
+class Sales(SalesBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
     customer: Customer = Relationship(back_populates="purchases")
     seller: Employee = Relationship(back_populates="sales")
+    date: datetime
+
+
+class SalesCreate(SalesBase):
+    pass
 
 
 Territory.update_forward_refs()
