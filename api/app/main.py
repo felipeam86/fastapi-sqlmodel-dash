@@ -78,7 +78,7 @@ def get_customers(
         return customers
 
 
-@app.get("/topn_emplyees/{continent}/{n}", tags=["Employee"])
+@app.get("/topn_employees/{continent}/{n}", tags=["Employee"])
 def get_customers(continent: Continent, n: int):
 
     query = queries.get_top_n_employees(continent, n)
