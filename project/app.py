@@ -3,7 +3,7 @@ from typing import List
 from fastapi import FastAPI
 from sqlmodel import Session, select
 
-from . import db
+from . import db, queries
 from .models import Customer, Employee, Territory
 
 app = FastAPI()
@@ -56,3 +56,12 @@ def get_customers(territory_id: int) -> List[Customer]:
             select(Customer).where(Customer.territory_id == territory_id)
         ).all()
         return customers
+
+
+@app.get("/topn_emplyees/{continent}/{n}", tags=["Employee"])
+def get_customers(continent: str, n: int):
+
+    query = queries.get_top_n_employees(continent, n)
+    with Session(db.engine) as session:
+        topn_empoyees = session.exec(query).all()
+        return topn_empoyees
