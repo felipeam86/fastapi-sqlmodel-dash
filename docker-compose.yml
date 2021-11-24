@@ -24,6 +24,17 @@ services:
         - DATABASE_URL=postgresql://root:root@db:5432/sales
       depends_on:
         - db
+  dashboard:
+      build: ./dashboard
+      command: python -m app
+      volumes:
+        - ./dashboard:/usr/src/app
+      ports:
+        - 8050:8050
+      environment:
+        - DASH_DEBUG_MODE=True
+      depends_on:
+        - api
 
 volumes:
   pg_data:
