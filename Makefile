@@ -1,2 +1,8 @@
+start:
+	docker-compose up -d
+
+stop:
+	docker-compose down
+
 fake:
-	time python -m project.faker
+	docker-compose exec api python -m app.faker

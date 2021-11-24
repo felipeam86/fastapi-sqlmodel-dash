@@ -1,7 +1,9 @@
+import os
+
 import pandas as pd
 from sqlmodel import SQLModel, create_engine
 
-sql_url = "postgresql://root:root@localhost:5432/sales"
+sql_url = os.environ.get("DATABASE_URL")
 engine = create_engine(sql_url)
 
 
