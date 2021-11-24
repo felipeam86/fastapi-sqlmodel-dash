@@ -14,10 +14,10 @@ services:
       volumes:
         - pg_data:/var/lib/postgresql/data/
   api:
-      build: ./project
+      build: ./api
       command: uvicorn app.main:app --reload --workers 2 --host 0.0.0.0 --port 8000
       volumes:
-        - ./project:/usr/src/app
+        - ./api:/usr/src/app
       ports:
         - 8000:8000
       environment:
