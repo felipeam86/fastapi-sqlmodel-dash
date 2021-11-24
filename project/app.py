@@ -1,10 +1,10 @@
-from typing import List, Optional
+from typing import List
 
 from fastapi import FastAPI
 from sqlmodel import Session, select
 
 from . import db
-from .models import Customer, Employee, Sales, Territory
+from .models import Customer, Employee, Territory
 
 app = FastAPI()
 
