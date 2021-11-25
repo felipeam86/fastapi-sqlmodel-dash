@@ -50,13 +50,11 @@ The dasboard will be found on http://localhost:8050/
 
 ![Visualization dashboard](screenshots/dashboard.png)
 
-
-## pgAdmin
+## pgAdmin
 
 pgAdmin can be accessed on http://localhost:5050 with username `pgadmin@pgadmin.org` and password `admin`
 
-
-## Database
+## Database
 
 The postgress DB can be accessed at the following address:
 `postgresql://root:root@localhost:5432/sales`
