@@ -65,6 +65,7 @@ region = dbc.Container(
             id="region_graph",
         ),
         html.Div(id="top_employees"),
+        html.Div(id="top_customers"),
     ]
 )
 
@@ -96,19 +97,27 @@ def render_page_content(pathname):
     [
         Output("region_graph", "figure"),
         Output("top_employees", "children"),
+        Output("top_customers", "children"),
     ],
     [Input("tabs", "active_tab")],
 )
 def render_continent_tab_content(continent_tab):
     if continent_tab is not None:
         df_employees = data.get_top10_employees(continent_tab)
-        table = dbc.Table.from_dataframe(
+        table_employees = dbc.Table.from_dataframe(
             df_employees,
             striped=True,
             bordered=True,
             hover=True,
         )
-        return {}, table
+        df_customers = data.get_top100_customers(continent_tab)
+        table_customers = dbc.Table.from_dataframe(
+            df_customers,
+            striped=True,
+            bordered=True,
+            hover=True,
+        )
+        return {}, table_employees, table_customers
 
 
 if __name__ == "__main__":
