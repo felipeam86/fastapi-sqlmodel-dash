@@ -36,6 +36,16 @@ services:
         - API_URL=http://api:8000/
       depends_on:
         - api
+  pgadmin:
+      container_name: pgadmin
+      image: dpage/pgadmin4
+      environment:
+        - PGADMIN_DEFAULT_EMAIL=pgadmin@pgadmin.org
+        - PGADMIN_DEFAULT_PASSWORD=admin
+      ports:
+        - "5050:80"
+      depends_on:
+        - db
 
 volumes:
   pg_data:
