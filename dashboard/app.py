@@ -33,7 +33,6 @@ sidebar = html.Div(
         html.Hr(),
         dbc.Nav(
             [
-                dbc.NavLink("Home", href="/", active="exact"),
                 dbc.NavLink("Global overview", href="/global", active="exact"),
                 dbc.NavLink("Regional view", href="/region", active="exact"),
             ],
@@ -105,9 +104,7 @@ overview = dbc.Container(
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
-    if pathname == "/":
-        return html.P("This is the content of the home page!")
-    elif pathname == "/global":
+    if pathname in ("/global", "/"):
         return overview
     elif pathname == "/region":
         return region
