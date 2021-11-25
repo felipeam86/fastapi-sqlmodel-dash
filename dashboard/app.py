@@ -2,6 +2,7 @@ import dash
 import dash_bootstrap_components as dbc
 import data
 import plot
+import plotly.express as px
 from dash import Input, Output, dcc, html
 
 app = dash.Dash(
@@ -60,10 +61,25 @@ region = dbc.Container(
             id="tabs",
             active_tab="Africa",
         ),
-        dcc.Graph(
-            id="region_graph",
-        ),
+        html.Hr(),
+        html.H2("Top 10 employees"),
         html.Div(id="top_employees"),
+        html.Hr(),
+        html.H2("Top 100 customers"),
+        dbc.Row(
+            [
+                dbc.Col(
+                    dcc.Graph(
+                        id="customers_average_time_between_purchases",
+                    )
+                ),
+                dbc.Col(
+                    dcc.Graph(
+                        id="customers_average_purchase_price",
+                    )
+                ),
+            ]
+        ),
         html.Div(id="top_customers"),
     ]
 )
@@ -125,7 +141,8 @@ def render_page_content(pathname):
 
 @app.callback(
     [
-        Output("region_graph", "figure"),
+        Output("customers_average_time_between_purchases", "figure"),
+        Output("customers_average_purchase_price", "figure"),
         Output("top_employees", "children"),
         Output("top_customers", "children"),
     ],
@@ -147,7 +164,18 @@ def render_continent_tab_content(continent_tab):
             bordered=True,
             hover=True,
         )
-        return {}, table_employees, table_customers
+        plot_average_purchase_price = px.histogram(
+            df_customers, x="average_purchase_amount"
+        )
+        plot_average_time_between_purchases = px.histogram(
+            df_customers, x="avg_days_between_purchases"
+        )
+        return (
+            plot_average_purchase_price,
+            plot_average_time_between_purchases,
+            table_employees,
+            table_customers,
+        )
 
 
 if __name__ == "__main__":
