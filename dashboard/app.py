@@ -50,7 +50,6 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 region = dbc.Container(
     [
-        dcc.Store(id="store"),
         html.H1("Region overview"),
         html.Hr(),
         dbc.Tabs(
