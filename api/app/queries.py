@@ -1,4 +1,4 @@
-from sqlalchemy import Date, cast, func, select
+from sqlalchemy import Date, cast, extract, func, select
 
 from .models import Customer, Employee, Sales, Territory
 
@@ -61,6 +61,31 @@ def get_top_100_customers(continent: str):
         )
         .order_by(func.sum(Sales.amount).desc())
         .limit(100)
+    )
+
+    return query
+
+
+def get_year_by_year_sales():
+    query = (
+        select(
+            Territory.continent,
+            Territory.country,
+            extract("YEAR", Sales.date).label("year"),
+            func.sum(Sales.amount).label("total_sales"),
+            func.count(Sales.id).label("number_of_sales"),
+            func.avg(Sales.amount).label("average_sale_amount"),
+        )
+        .select_from(Territory)
+        .join(Employee)
+        .select_from(Employee)
+        .join(Sales)
+        .group_by(
+            Territory.continent,
+            Territory.country,
+            extract("YEAR", Sales.date),
+        )
+        .order_by(extract("YEAR", Sales.date))
     )
 
     return query

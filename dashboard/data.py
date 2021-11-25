@@ -39,3 +39,24 @@ def get_top100_customers(continent):
         ),
     )
     return df
+
+
+def get_year_by_year_sales():
+    response = requests.get(API_URL + f"year_by_year_sales")
+    df_sales = pd.DataFrame(response.json())
+    df_sales.assign(average_sale_amount=df_sales.average_sale_amount.round(2))
+    df_sales_year = (
+        df_sales.groupby("year")
+        .agg(
+            total_sales=("total_sales", "sum"),
+            number_of_sales=("number_of_sales", "sum"),
+            number_of_continents=("continent", "nunique"),
+            number_of_countries=("country", "nunique"),
+        )
+        .assign(
+            average_sale_amount=lambda df: (df.total_sales / df.number_of_sales).round(
+                1
+            )
+        )
+    )
+    return df_sales, df_sales_year

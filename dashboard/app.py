@@ -1,6 +1,7 @@
 import dash
 import dash_bootstrap_components as dbc
 import data
+import plot
 from dash import Input, Output, dcc, html
 
 app = dash.Dash(
@@ -70,12 +71,45 @@ region = dbc.Container(
 )
 
 
+df_sales, df_sales_year = data.get_year_by_year_sales()
+
+overview = dbc.Container(
+    [
+        html.H1("Global overview"),
+        html.Hr(),
+        html.H2("Sales overview"),
+        dbc.Row(
+            [
+                dbc.Col(
+                    dcc.Graph(
+                        id="total_sales_year_graph",
+                        figure=plot.total_sales_year_graph(df_sales_year),
+                    )
+                ),
+                dbc.Col(
+                    dcc.Graph(
+                        id="average_sale_year_graph",
+                        figure=plot.average_sale_year_graph(df_sales_year),
+                    )
+                ),
+            ]
+        ),
+        html.Hr(),
+        html.H2("Sales per continent and country"),
+        dcc.Graph(
+            id="total_sales_year_per_country_graph",
+            figure=plot.total_sales_year_per_country_graph(df_sales),
+        ),
+    ]
+)
+
+
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
     if pathname == "/":
         return html.P("This is the content of the home page!")
     elif pathname == "/global":
-        return html.P("Global overview of operations")
+        return overview
     elif pathname == "/region":
         return region
     # If the user tries to reach a different page, return a 404 message

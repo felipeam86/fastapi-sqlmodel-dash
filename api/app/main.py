@@ -96,6 +96,15 @@ def get_customers(continent: Continent):
         return top100_customers
 
 
+@app.get("/year_by_year_sales/", tags=["Sales"])
+def get_year_by_year_sales():
+
+    query = queries.get_year_by_year_sales()
+    with Session(db.engine) as session:
+        year_by_year_sales = session.exec(query).all()
+        return year_by_year_sales
+
+
 @app.post("/sale", response_model=Sales, tags=["Sales"])
 def add_sale(sale: SalesCreate):
     with Session(db.engine) as session:
